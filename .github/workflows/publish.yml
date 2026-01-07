@@ -38,7 +38,7 @@ jobs:
           cd dist
           sha256sum * > sha256sums.txt
       - name: Sign artifacts with Sigstore
-        uses: sigstore/gh-action-sigstore-python@61f6a500bbfdd9a2a339cf033e5421951fbc1cd2 # v2.1.1
+        uses: sigstore/gh-action-sigstore-python@a5caf349bc536fbef3668a10ed7f5cd309a4b53d # v3.2.0
         with:
           inputs: dist/*
       - name: Upload release artifacts
