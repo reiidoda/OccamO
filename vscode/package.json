@@ -1,0 +1,60 @@
+{
+  "name": "occamo",
+  "displayName": "OccamO",
+  "description": "Surface OccamO findings as VS Code diagnostics.",
+  "version": "0.1.0",
+  "publisher": "reiidoda",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reiidoda/OccamO"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Linters"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:occamo.loadReport",
+    "onCommand:occamo.clearDiagnostics"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "occamo.loadReport",
+        "title": "OccamO: Load Report"
+      },
+      {
+        "command": "occamo.clearDiagnostics",
+        "title": "OccamO: Clear Diagnostics"
+      }
+    ],
+    "configuration": {
+      "title": "OccamO",
+      "properties": {
+        "occamo.reportPath": {
+          "type": "string",
+          "default": "out/occamo.json",
+          "description": "Path to an OccamO JSON report (relative to workspace)."
+        },
+        "occamo.autoLoad": {
+          "type": "boolean",
+          "default": true,
+          "description": "Load diagnostics automatically on startup if the report exists."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -w -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.3"
+  }
+}

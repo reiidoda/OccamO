@@ -1,0 +1,54 @@
+name: Publish
+on:
+  release:
+    types: [ published ]
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+  actions: write
+
+jobs:
+  publish-pypi:
+    if: ${{ vars.PUBLISH_PYPI == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+      - name: Build
+        run: |
+          pip install build
+          python -m build
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@ef244123eb79f2f7a7e75d99086184180e6d0018 # v1
+        with:
+          subject-path: dist/*
+      - name: Generate SBOM
+        uses: anchore/sbom-action@a930d0ac434e3182448fe678398ba5713717112a # v0
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: dist/occamo.sbom.json
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum * > sha256sums.txt
+      - name: Sign artifacts with Sigstore
+        uses: sigstore/gh-action-sigstore-python@61f6a500bbfdd9a2a339cf033e5421951fbc1cd2 # v2.1.1
+        with:
+          inputs: dist/*
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: occamo-release-assets
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
+            dist/occamo.sbom.json
+            dist/sha256sums.txt
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@8a08d616893759ef8e1aa1f2785787c0b97e20d6 # v1.10.0

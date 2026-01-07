@@ -1,0 +1,65 @@
+name: OccamO Bench
+on:
+  pull_request:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -e ".[bench]"
+      - name: Find baseline run
+        id: baseline
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        with:
+          script: |
+            try {
+              const { data } = await github.rest.actions.listWorkflowRuns({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: "bench-baseline.yml",
+                branch: context.repo.default_branch,
+                status: "success",
+                per_page: 1,
+              });
+              if (!data.workflow_runs.length) {
+                core.notice("No successful bench baseline runs found; running without baseline.");
+                core.setOutput("skip", "true");
+                return;
+              }
+              core.setOutput("skip", "false");
+              core.setOutput("run_id", data.workflow_runs[0].id);
+            } catch (error) {
+              core.notice(`Failed to fetch bench baseline runs: ${error.message}`);
+              core.setOutput("skip", "true");
+            }
+      - name: Download baseline
+        if: ${{ steps.baseline.outputs.skip != 'true' }}
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          run-id: ${{ steps.baseline.outputs.run_id }}
+          name: occamo-bench-baseline
+          path: out/bench-baseline
+      - name: Run benchmarks
+        run: |
+          if [ "${{ steps.baseline.outputs.skip }}" = "true" ]; then
+            occamo-bench --json out/occamo.bench.pr.json
+          else
+            occamo-bench --json out/occamo.bench.pr.json \
+              --baseline out/bench-baseline/out/occamo.bench.json \
+              --max-regression 0.15
+          fi
+      - name: Upload results
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: occamo-bench-pr
+          path: out/occamo.bench.pr.json

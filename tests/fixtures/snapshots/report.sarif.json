@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "runs": [
+    {
+      "automationDetails": {
+        "id": "occamo-analysis"
+      },
+      "invocations": [
+        {
+          "endTimeUtc": "2024-01-01T00:00:00Z",
+          "executionSuccessful": true
+        }
+      ],
+      "results": [
+        {
+          "level": "note",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/utils.py"
+                },
+                "region": {
+                  "endLine": 8,
+                  "startLine": 5
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "O(n) candidate (risk 0.400, helper)"
+          },
+          "properties": {
+            "confidence": 0.65,
+            "risk_score": 0.4,
+            "severity": "low",
+            "signals": {
+              "comprehension": 0,
+              "loops": 1,
+              "max_loop_depth": 1,
+              "recursion": false,
+              "sort_calls": 0
+            }
+          },
+          "ruleId": "occamo.hotspot"
+        },
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/app.py"
+                },
+                "region": {
+                  "startLine": 10
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Risk +1.700: O(n) candidate -> O(n^2) candidate (Widget.render)"
+          },
+          "properties": {
+            "base_hint": "O(n) candidate",
+            "base_risk_score": 0.4,
+            "base_signals": {
+              "comprehension": 0,
+              "loops": 1,
+              "max_loop_depth": 1,
+              "recursion": false,
+              "sort_calls": 0
+            },
+            "dynamic": {
+              "note": "stable",
+              "ratio": 1.6,
+              "status": "confirmed"
+            },
+            "explanation": "Loop depth increased 1 -> 2.",
+            "head_hint": "O(n^2) candidate",
+            "head_risk_score": 2.1,
+            "head_signals": {
+              "comprehension": 0,
+              "loops": 2,
+              "max_loop_depth": 2,
+              "recursion": false,
+              "sort_calls": 1
+            },
+            "regression_severity": "high",
+            "risk_delta": 1.7,
+            "suggestions": [
+              "Reduce nested loops by precomputing lookups or indexing with dict/set.",
+              "Sort once outside loops or use a heap for top-k."
+            ]
+          },
+          "ruleId": "occamo.regression"
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "OccamO",
+          "rules": [
+            {
+              "fullDescription": {
+                "text": "Static signals suggest elevated algorithmic complexity in this function."
+              },
+              "help": {
+                "markdown": "Static analysis detected signals (loops, recursion, sort calls) that may indicate higher algorithmic complexity. Review the implementation to confirm.",
+                "text": "Review loop nesting, recursion, and sorting patterns to confirm complexity."
+              },
+              "id": "occamo.hotspot",
+              "name": "Complexity hotspot",
+              "properties": {
+                "precision": "medium",
+                "tags": [
+                  "performance",
+                  "complexity",
+                  "occamo"
+                ]
+              },
+              "shortDescription": {
+                "text": "Potential complexity hotspot (heuristic)"
+              }
+            },
+            {
+              "fullDescription": {
+                "text": "Static signals suggest complexity has increased compared to baseline."
+              },
+              "help": {
+                "markdown": "OccamO detected a higher risk score or complexity hint compared to the baseline. Review recent changes for added loops, recursion, or sorting.",
+                "text": "Compare baseline and head signals to confirm a regression."
+              },
+              "id": "occamo.regression",
+              "name": "Complexity regression",
+              "properties": {
+                "precision": "high",
+                "tags": [
+                  "performance",
+                  "complexity",
+                  "regression",
+                  "occamo"
+                ]
+              },
+              "shortDescription": {
+                "text": "Potential complexity regression vs baseline"
+              }
+            }
+          ],
+          "version": "0.0.0"
+        }
+      }
+    }
+  ],
+  "version": "2.1.0"
+}

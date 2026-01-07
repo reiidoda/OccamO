@@ -1,0 +1,6 @@
+- id: occamo
+  name: occamo
+  description: "OccamO complexity regression guard (local CLI)"
+  entry: occamo analyze . --changed-only --diff-functions --new-findings-only --max-findings 25
+  language: python
+  pass_filenames: false

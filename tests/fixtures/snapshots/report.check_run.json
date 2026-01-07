@@ -1,0 +1,15 @@
+{
+  "annotations": [
+    {
+      "annotation_level": "warning",
+      "end_line": 10,
+      "message": "Risk +1.700: O(n) candidate -> O(n^2) candidate (Widget.render). Loop depth increased 1 -> 2.",
+      "path": "src/app.py",
+      "start_line": 10,
+      "title": "OccamO regression"
+    }
+  ],
+  "summary": "- Mode: changed-only\n- Baseline compare: enabled\n- Regressions: 1\n- Findings: 2\n- Suppressions: 1",
+  "text": "**Regressions**\n\n| Severity | Risk \u0394 | Hint \u0394 | Dynamic | Location | Why |\n|---|---:|---:|---|---|---|\n| high | +1.700 | +3 | confirmed (1.60x) | [src/app.py:10](https://github.com/acme/occamo/blob/deadbeef/src/app.py#L10) `Widget.render` | Loop depth increased 1 -> 2. |",
+  "title": "OccamO analysis"
+}

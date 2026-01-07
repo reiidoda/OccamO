@@ -1,0 +1,34 @@
+name: Action E2E
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  action-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: ./action
+        with:
+          install: "true"
+          install_target: "."
+          changed_only: "false"
+          compare_base: "false"
+          md_out: "out/occamo.md"
+          json_out: "out/occamo.json"
+          write_summary: "true"
+      - name: Verify outputs
+        shell: bash
+        run: |
+          test -f out/occamo.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path("out/occamo.json").read_text())
+          assert "schema_version" in data
+          assert "findings" in data
+          print("ok")
+          PY

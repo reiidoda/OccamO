@@ -1,0 +1,49 @@
+name: Bug report
+description: Report a problem or regression in OccamO
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened and why is it a problem?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include minimal code/config if possible.
+      placeholder: |
+        1. occamo analyze ...
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: OccamO version
+      placeholder: 0.1.0
+  - type: textarea
+    id: config
+    attributes:
+      label: Config snippet
+      description: Redact secrets.
+      render: yaml
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs/output
+      render: text

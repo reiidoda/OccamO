@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OccamO report</title>
+<style>body{font-family:'IBM Plex Sans','Segoe UI',sans-serif;background:#f6f3ee;color:#1f2a2e;margin:0;padding:24px;}h1{margin:0 0 12px;}h2{margin-top:28px;}.meta{list-style:none;padding:0;margin:0 0 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:6px;} .card{background:#ffffff;border-radius:14px;padding:16px 18px;box-shadow:0 8px 24px rgba(31,42,46,0.08);margin-bottom:18px;}table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px;}th,td{padding:8px 10px;border-bottom:1px solid #e7e2d9;text-align:left;vertical-align:top;}th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#5b666a;}.sev-high{color:#8c1d18;font-weight:600;}.sev-medium{color:#a35a00;font-weight:600;}.sev-low{color:#2b5f8a;font-weight:600;}.sev-info{color:#4b5563;font-weight:600;}.tag{display:inline-block;padding:2px 8px;border-radius:999px;background:#edf2f7;font-size:12px;}.note{color:#586069;font-size:13px;}</style>
+</head>
+<body>
+<h1>OccamO report</h1>
+<div class="card">
+<ul class="meta">
+<li><span class="tag">Generated</span> 2024-01-01T00:00:00Z</li>
+<li><span class="tag">Mode</span> changed-only</li>
+<li><span class="tag">Base ref</span> origin/main</li>
+<li><span class="tag">Baseline compare</span> enabled</li>
+<li><span class="tag">Schema</span> v7</li>
+<li><span class="tag">Suppressions</span> 1</li>
+<li><span class="tag">Findings</span> 2</li>
+<li><span class="tag">Regressions</span> 1</li>
+<li><span class="tag">By severity</span> high:1, low:1</li>
+</ul>
+</div>
+<div class="card">
+<h2>Regressions vs base</h2>
+<table><thead><tr>
+<th>Severity</th>
+<th>Risk Delta</th>
+<th>Hint Delta</th>
+<th>Dynamic</th>
+<th>Base</th>
+<th>Head</th>
+<th>Location</th>
+<th>Why</th>
+</tr></thead><tbody>
+<tr><td><span class="sev-high">high</span></td><td>+1.700</td><td>+3</td><td>confirmed (1.60x)</td><td>0.400 / O(n) candidate</td><td>2.100 / O(n^2) candidate</td><td>src/app.py:10 Widget.render</td><td>Loop depth increased 1 -&gt; 2.</td></tr>
+</tbody></table>
+<h3>Fix suggestions</h3>
+<ul>
+<li><strong>src/app.py:10 Widget.render</strong>: Reduce nested loops by precomputing lookups or indexing with dict/set.; Sort once outside loops or use a heap for top-k.</li>
+</ul>
+</div>
+<div class="card">
+<h2>Top hotspots</h2>
+<table><thead><tr>
+<th>Severity</th>
+<th>Risk</th>
+<th>Confidence</th>
+<th>Dynamic</th>
+<th>Hint</th>
+<th>Location</th>
+</tr></thead><tbody>
+<tr><td><span class="sev-high">high</span></td><td>2.100</td><td>0.75</td><td>confirmed (O(n^2) candidate)</td><td>O(n^2) candidate</td><td>src/app.py:10 Widget.render</td></tr>
+<tr><td><span class="sev-low">low</span></td><td>0.400</td><td>0.65</td><td>n/a</td><td>O(n) candidate</td><td>src/utils.py:5 helper</td></tr>
+</tbody></table>
+<h3>Fix suggestions</h3>
+<ul>
+<li><strong>src/app.py:10 Widget.render</strong>: Reduce nesting by precomputing lookups.; Sort once outside loops.</li>
+</ul>
+</div>
+<div class="card">
+<h2>Suppressions</h2>
+<table><thead><tr>
+<th>Location</th>
+<th>Reason</th>
+<th>Ticket</th>
+<th>Comment</th>
+</tr></thead><tbody>
+<tr><td>src/legacy.py:42 legacy.fn</td><td>legacy path</td><td>ABC-123</td><td>occamo: ignore reason=&quot;legacy path&quot; ticket=&quot;ABC-123&quot;</td></tr>
+</tbody></table>
+</div>
+<p class="note">OccamO uses static heuristics; dynamic verification is optional.</p>
+</body></html>

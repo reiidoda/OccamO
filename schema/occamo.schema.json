@@ -1,0 +1,295 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OccamO Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "repo_root",
+    "changed_only",
+    "base_ref",
+    "regression_mode",
+    "findings",
+    "regressions"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer" },
+    "generated_at": { "type": "string" },
+    "repo_root": { "type": "string" },
+    "changed_only": { "type": "boolean" },
+    "base_ref": { "type": "string" },
+    "regression_mode": { "type": "boolean" },
+    "findings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/finding" }
+    },
+    "regressions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/regression" }
+    },
+    "suppressions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/suppression" }
+    },
+    "diffs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/change" }
+    },
+    "stats": {
+      "$ref": "#/$defs/stats"
+    }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "qualname",
+        "function_id",
+        "lineno",
+        "end_lineno",
+        "severity",
+        "complexity_hint",
+        "confidence",
+        "risk_score",
+        "signals",
+        "body_hash"
+      ],
+      "properties": {
+        "file": { "type": "string" },
+        "qualname": { "type": "string" },
+        "function_id": { "type": "string" },
+        "lineno": { "type": "integer" },
+        "end_lineno": { "type": "integer" },
+        "severity": {
+          "type": "string",
+          "enum": ["info", "low", "medium", "high", "critical"]
+        },
+        "complexity_hint": { "type": "string" },
+        "confidence": { "type": "number" },
+        "risk_score": { "type": "number" },
+        "signals": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "loops",
+            "max_loop_depth",
+            "recursion",
+            "sort_calls",
+            "comprehension"
+          ],
+          "properties": {
+            "loops": { "type": "integer" },
+            "max_loop_depth": { "type": "integer" },
+            "recursion": { "type": "boolean" },
+            "sort_calls": { "type": "integer" },
+            "comprehension": { "type": "integer" }
+          }
+        },
+        "body_hash": { "type": "string" },
+        "explanation": { "type": "string" },
+        "suggestions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "rule_id": { "type": "string" },
+        "rule_name": { "type": "string" },
+        "dynamic": {
+          "anyOf": [
+            { "$ref": "#/$defs/dynamic_check" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "regression": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "qualname",
+        "function_id",
+        "lineno",
+        "base_risk_score",
+        "head_risk_score",
+        "base_hint",
+        "head_hint",
+        "risk_delta",
+        "hint_delta",
+        "regression_severity",
+        "explanation",
+        "suggestions",
+        "base_signals",
+        "head_signals"
+      ],
+      "properties": {
+        "file": { "type": "string" },
+        "qualname": { "type": "string" },
+        "function_id": { "type": "string" },
+        "lineno": { "type": "integer" },
+        "base_risk_score": { "type": "number" },
+        "head_risk_score": { "type": "number" },
+        "base_hint": { "type": "string" },
+        "head_hint": { "type": "string" },
+        "risk_delta": { "type": "number" },
+        "hint_delta": { "type": ["integer", "null"] },
+        "regression_severity": { "type": "string", "enum": ["low", "medium", "high"] },
+        "explanation": { "type": "string" },
+        "suggestions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "base_signals": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "loops",
+            "max_loop_depth",
+            "recursion",
+            "sort_calls",
+            "comprehension"
+          ],
+          "properties": {
+            "loops": { "type": "integer" },
+            "max_loop_depth": { "type": "integer" },
+            "recursion": { "type": "boolean" },
+            "sort_calls": { "type": "integer" },
+            "comprehension": { "type": "integer" }
+          }
+        },
+        "head_signals": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "loops",
+            "max_loop_depth",
+            "recursion",
+            "sort_calls",
+            "comprehension"
+          ],
+          "properties": {
+            "loops": { "type": "integer" },
+            "max_loop_depth": { "type": "integer" },
+            "recursion": { "type": "boolean" },
+            "sort_calls": { "type": "integer" },
+            "comprehension": { "type": "integer" }
+          }
+        },
+        "dynamic": {
+          "anyOf": [
+            { "$ref": "#/$defs/dynamic_regression" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "qualname",
+        "function_id",
+        "lineno",
+        "change_type",
+        "trend",
+        "base_risk_score",
+        "head_risk_score",
+        "base_hint",
+        "head_hint",
+        "risk_delta",
+        "hint_delta",
+        "regression_severity"
+      ],
+      "properties": {
+        "file": { "type": "string" },
+        "qualname": { "type": "string" },
+        "function_id": { "type": "string" },
+        "lineno": { "type": "integer" },
+        "change_type": { "type": "string", "enum": ["added", "removed", "changed"] },
+        "trend": { "type": "string", "enum": ["new", "removed", "worse", "better", "same"] },
+        "base_risk_score": { "type": ["number", "null"] },
+        "head_risk_score": { "type": ["number", "null"] },
+        "base_hint": { "type": ["string", "null"] },
+        "head_hint": { "type": ["string", "null"] },
+        "risk_delta": { "type": ["number", "null"] },
+        "hint_delta": { "type": ["integer", "null"] },
+        "regression_severity": { "type": ["string", "null"], "enum": ["low", "medium", "high", null] }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "findings_total",
+        "regressions_total",
+        "severity_counts",
+        "hint_counts",
+        "max_risk_score",
+        "avg_risk_score",
+        "max_regression_delta"
+      ],
+      "properties": {
+        "findings_total": { "type": "integer" },
+        "regressions_total": { "type": "integer" },
+        "severity_counts": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "hint_counts": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "max_risk_score": { "type": "number" },
+        "avg_risk_score": { "type": "number" },
+        "max_regression_delta": { "type": "number" }
+      }
+    },
+    "dynamic_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "confidence", "status", "note"],
+      "properties": {
+        "label": { "type": "string" },
+        "confidence": { "type": "number" },
+        "status": { "type": "string", "enum": ["confirmed", "downgraded", "inconclusive", "skipped"] },
+        "note": { "type": "string" }
+      }
+    },
+    "dynamic_regression": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "ratio", "note"],
+      "properties": {
+        "status": { "type": "string", "enum": ["confirmed", "downgraded", "inconclusive", "skipped"] },
+        "ratio": { "type": "number" },
+        "note": { "type": "string" }
+      }
+    },
+    "suppression": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "qualname",
+        "function_id",
+        "lineno",
+        "end_lineno",
+        "comment_line"
+      ],
+      "properties": {
+        "file": { "type": "string" },
+        "qualname": { "type": "string" },
+        "function_id": { "type": "string" },
+        "lineno": { "type": "integer" },
+        "end_lineno": { "type": "integer" },
+        "comment_line": { "type": "integer" },
+        "reason": { "type": "string" },
+        "ticket": { "type": "string" },
+        "comment": { "type": "string" }
+      }
+    }
+  }
+}

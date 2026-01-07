@@ -1,0 +1,753 @@
+name: "OccamO"
+description: "Run OccamO analysis and write reports/artifacts"
+branding:
+  icon: "activity"
+  color: "blue"
+inputs:
+  path:
+    description: "Repository root"
+    required: false
+    default: "."
+  config:
+    description: "Config file path (repo-relative or absolute)"
+    required: false
+    default: ""
+  report_include:
+    description: "Report include path (single pattern)"
+    required: false
+    default: ""
+  report_exclude:
+    description: "Report exclude path (single pattern)"
+    required: false
+    default: ""
+  languages:
+    description: "Comma-separated languages to analyze (python, javascript, typescript)"
+    required: false
+    default: ""
+  changed_only:
+    description: "Analyze only changed files"
+    required: false
+    default: "true"
+  changed_only_strict:
+    description: "Do not fall back to full scan if git diff is empty/unavailable"
+    required: false
+    default: "false"
+  diff_functions:
+    description: "Filter findings to functions touched by the diff"
+    required: false
+    default: ""
+  no_diff_functions:
+    description: "Disable diff-based function filtering"
+    required: false
+    default: "false"
+  base_ref:
+    description: "Base ref for git diff"
+    required: false
+    default: "origin/main"
+  compare_base:
+    description: "Compare findings vs base ref and flag regressions"
+    required: false
+    default: "false"
+  baseline_json:
+    description: "Baseline JSON report for comparisons"
+    required: false
+    default: ""
+  baseline_auto:
+    description: "Auto-download baseline artifact from default branch"
+    required: false
+    default: "false"
+  baseline_workflow:
+    description: "Baseline workflow file name or ID"
+    required: false
+    default: "occamo-baseline.yml"
+  baseline_artifact:
+    description: "Baseline artifact name"
+    required: false
+    default: "occamo-baseline"
+  baseline_download_dir:
+    description: "Directory to download baseline artifact"
+    required: false
+    default: "out/occamo-baseline"
+  baseline_json_path:
+    description: "Path to baseline JSON inside the artifact"
+    required: false
+    default: "out/occamo.json"
+  md_out:
+    description: "Markdown output path"
+    required: false
+    default: "out/occamo.md"
+  json_out:
+    description: "JSON output path"
+    required: false
+    default: "out/occamo.json"
+  html_out:
+    description: "HTML output path"
+    required: false
+    default: ""
+  sarif_out:
+    description: "SARIF output path"
+    required: false
+    default: "out/occamo.sarif"
+  annotations_out:
+    description: "GitHub annotations output path"
+    required: false
+    default: ""
+  comment_out:
+    description: "PR comment markdown output path"
+    required: false
+    default: ""
+  check_run_out:
+    description: "GitHub check-run payload JSON output path"
+    required: false
+    default: ""
+  trend_out:
+    description: "Trend JSON output path"
+    required: false
+    default: ""
+  trend_html_out:
+    description: "Trend HTML output path"
+    required: false
+    default: ""
+  slack_out:
+    description: "Slack payload output path"
+    required: false
+    default: ""
+  teams_out:
+    description: "Teams payload output path"
+    required: false
+    default: ""
+  snippets_out:
+    description: "Quick-fix snippets Markdown output path"
+    required: false
+    default: ""
+  post_comment:
+    description: "Post or update the PR comment using GitHub API"
+    required: false
+    default: "false"
+  post_check_run:
+    description: "Post or update a GitHub check-run summary"
+    required: false
+    default: "false"
+  min_risk_score:
+    description: "Filter findings below this risk score"
+    required: false
+    default: ""
+  min_confidence:
+    description: "Filter findings below this confidence"
+    required: false
+    default: ""
+  min_severity:
+    description: "Filter findings below this severity"
+    required: false
+    default: ""
+  min_regression_risk_delta:
+    description: "Filter regressions below this risk delta"
+    required: false
+    default: ""
+  min_regression_hint_delta:
+    description: "Filter regressions below this hint delta"
+    required: false
+    default: ""
+  min_regression_severity:
+    description: "Filter regressions below this severity"
+    required: false
+    default: ""
+  min_function_lines:
+    description: "Ignore functions smaller than this line count"
+    required: false
+    default: ""
+  warn_regression_risk_delta:
+    description: "Warn when regression risk delta meets/exceeds this value"
+    required: false
+    default: ""
+  fail_regression_risk_delta:
+    description: "Fail when regression risk delta meets/exceeds this value"
+    required: false
+    default: ""
+  dynamic_verify:
+    description: "Run dynamic verification for top hotspots (executes code)"
+    required: false
+    default: "false"
+  dynamic_top:
+    description: "Number of hotspots to dynamically verify"
+    required: false
+    default: ""
+  dynamic_timeout:
+    description: "Timeout (seconds) for each dynamic check"
+    required: false
+    default: ""
+  dynamic_confidence:
+    description: "Minimum confidence to confirm/downgrade dynamic checks"
+    required: false
+    default: ""
+  dynamic_trials:
+    description: "Trials per input size for dynamic checks"
+    required: false
+    default: ""
+  dynamic_slowdown_ratio:
+    description: "Slowdown ratio to confirm regressions in dynamic mode"
+    required: false
+    default: ""
+  dynamic_warmups:
+    description: "Warmup runs per size before timing"
+    required: false
+    default: ""
+  dynamic_memory_limit:
+    description: "Memory limit (MB) for dynamic checks"
+    required: false
+    default: ""
+  dynamic_jitter_threshold:
+    description: "Variance threshold for dynamic checks"
+    required: false
+    default: ""
+  dynamic_sizes:
+    description: "Comma-separated input sizes for dynamic checks"
+    required: false
+    default: ""
+  max_findings:
+    description: "Fail if finding count exceeds this value"
+    required: false
+    default: ""
+  fail_on_finding_severity:
+    description: "Fail if any finding meets/exceeds this severity"
+    required: false
+    default: ""
+  max_risk_score:
+    description: "Fail if any finding risk score exceeds this value"
+    required: false
+    default: ""
+  notify_min_severity:
+    description: "Minimum severity for Slack/Teams notifications"
+    required: false
+    default: ""
+  notify_max_items:
+    description: "Max items to include in notifications"
+    required: false
+    default: ""
+  rules:
+    description: "Enable rule engine"
+    required: false
+    default: ""
+  no_rules:
+    description: "Disable rule engine"
+    required: false
+    default: "false"
+  enabled_rules:
+    description: "Comma-separated rule IDs to enable"
+    required: false
+    default: ""
+  disabled_rules:
+    description: "Comma-separated rule IDs to disable"
+    required: false
+    default: ""
+  rule_plugins:
+    description: "Comma-separated rule plugin modules"
+    required: false
+    default: ""
+  rule_severity_overrides:
+    description: "Comma-separated rule_id=severity overrides"
+    required: false
+    default: ""
+  no_call_graph:
+    description: "Disable call graph aggregation"
+    required: false
+    default: "false"
+  call_graph_passes:
+    description: "Iterations for call graph aggregation"
+    required: false
+    default: ""
+  hot_paths:
+    description: "Comma-separated hot path patterns"
+    required: false
+    default: ""
+  hot_functions:
+    description: "Comma-separated hot function selectors"
+    required: false
+    default: ""
+  hot_multiplier:
+    description: "Hot path multiplier"
+    required: false
+    default: ""
+  hot_profile:
+    description: "Path to pstats or speedscope profile"
+    required: false
+    default: ""
+  hot_profile_top:
+    description: "Top N profile entries for hot paths"
+    required: false
+    default: ""
+  hot_trace_summary:
+    description: "Path to trace summary JSON"
+    required: false
+    default: ""
+  parallel_workers:
+    description: "Number of analysis worker threads"
+    required: false
+    default: ""
+  analysis_time_budget:
+    description: "Stop analysis after this many seconds"
+    required: false
+    default: ""
+  cache_path:
+    description: "Cache path for incremental analysis"
+    required: false
+    default: ""
+  no_cache:
+    description: "Disable incremental cache"
+    required: false
+    default: "false"
+  refresh_cache:
+    description: "Rebuild cache entries for analyzed files"
+    required: false
+    default: "false"
+  upload_sarif:
+    description: "Upload SARIF to GitHub code scanning"
+    required: false
+    default: "false"
+  fail_on_regressions:
+    description: "Fail the step if regressions are detected"
+    required: false
+    default: "false"
+  fail_on_severity:
+    description: "Fail if any regression meets/exceeds this severity"
+    required: false
+    default: ""
+  max_regressions:
+    description: "Fail if regression count exceeds this value"
+    required: false
+    default: ""
+  max_high_regressions:
+    description: "Fail if high/critical regressions exceed this value"
+    required: false
+    default: ""
+  gating_preset:
+    description: "Apply a predefined gating preset"
+    required: false
+    default: ""
+  max_risk_delta:
+    description: "Fail if any regression risk delta exceeds this value"
+    required: false
+    default: ""
+  risk_delta_budget:
+    description: "Fail if total regression risk delta exceeds this value"
+    required: false
+    default: ""
+  risk_delta_budget_paths:
+    description: "Comma-separated path budgets (pattern=budget)"
+    required: false
+    default: ""
+  loop_depth_fail_paths:
+    description: "Comma-separated paths where loop depth increases should fail"
+    required: false
+    default: ""
+  no_regressions_paths:
+    description: "Comma-separated paths where any regression should fail"
+    required: false
+    default: ""
+  new_findings_only:
+    description: "Report only new/worse findings when comparing to base"
+    required: false
+    default: "false"
+  install:
+    description: "Install OccamO before running"
+    required: false
+    default: "false"
+  python_version:
+    description: "Python version to use when installing"
+    required: false
+    default: "3.12"
+  install_target:
+    description: "Install target (e.g. occamo or ./)"
+    required: false
+    default: "occamo"
+  install_extras:
+    description: "Extras to install (comma-separated)"
+    required: false
+    default: ""
+  install_command:
+    description: "Custom install command (overrides install_target/extras)"
+    required: false
+    default: ""
+  fail_on_error:
+    description: "Fail the step if analysis exits nonzero"
+    required: false
+    default: "true"
+  write_summary:
+    description: "Write a GitHub Step Summary from the Markdown report"
+    required: false
+    default: "true"
+outputs:
+  findings:
+    description: "Finding count"
+    value: ${{ steps.stats.outputs.findings }}
+  regressions:
+    description: "Regression count"
+    value: ${{ steps.stats.outputs.regressions }}
+  max_risk_score:
+    description: "Highest risk score in findings"
+    value: ${{ steps.stats.outputs.max_risk_score }}
+  avg_risk_score:
+    description: "Average risk score in findings"
+    value: ${{ steps.stats.outputs.avg_risk_score }}
+  max_regression_delta:
+    description: "Largest risk delta among regressions"
+    value: ${{ steps.stats.outputs.max_regression_delta }}
+  gating_failed:
+    description: "Whether analysis exited nonzero"
+    value: ${{ steps.stats.outputs.gating_failed }}
+  exit_code:
+    description: "OccamO exit code"
+    value: ${{ steps.stats.outputs.exit_code }}
+
+runs:
+  using: "composite"
+  steps:
+    - if: ${{ inputs.install == 'true' }}
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      with:
+        python-version: ${{ inputs.python_version }}
+    - if: ${{ inputs.install == 'true' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [[ -n "${{ inputs.install_command }}" ]]; then
+          bash -c "${{ inputs.install_command }}"
+          exit 0
+        fi
+        target="${{ inputs.install_target }}"
+        extras="${{ inputs.install_extras }}"
+        if [[ -n "$extras" ]]; then
+          extras="${extras// /}"
+          target="${target}[${extras}]"
+        fi
+        pip install "$target"
+    - if: ${{ inputs.baseline_auto == 'true' }}
+      id: baseline_run
+      uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+      with:
+        script: |
+          const { data } = await github.rest.actions.listWorkflowRuns({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            workflow_id: "${{ inputs.baseline_workflow }}",
+            branch: context.repo.default_branch,
+            status: "success",
+            per_page: 1,
+          });
+          if (!data.workflow_runs.length) {
+            core.setFailed("No successful baseline runs found.");
+            return;
+          }
+          core.setOutput("run_id", data.workflow_runs[0].id);
+    - if: ${{ inputs.baseline_auto == 'true' }}
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      with:
+        run-id: ${{ steps.baseline_run.outputs.run_id }}
+        name: ${{ inputs.baseline_artifact }}
+        path: ${{ inputs.baseline_download_dir }}
+    - if: ${{ inputs.baseline_auto == 'true' }}
+      id: baseline_path
+      shell: bash
+      run: |
+        echo "path=${{ inputs.baseline_download_dir }}/${{ inputs.baseline_json_path }}" >> "$GITHUB_OUTPUT"
+    - id: analyze
+      shell: bash
+      continue-on-error: true
+      run: |
+        set -euo pipefail
+        BASELINE_JSON="${{ inputs.baseline_json }}"
+        if [[ -z "$BASELINE_JSON" && "${{ inputs.baseline_auto }}" == "true" ]]; then
+          BASELINE_JSON="${{ steps.baseline_path.outputs.path }}"
+        fi
+
+        args=(occamo analyze "${{ inputs.path }}")
+        [[ -n "${{ inputs.config }}" ]] && args+=("--config" "${{ inputs.config }}")
+        [[ -n "${{ inputs.report_include }}" ]] && args+=("--report-include" "${{ inputs.report_include }}")
+        [[ -n "${{ inputs.report_exclude }}" ]] && args+=("--report-exclude" "${{ inputs.report_exclude }}")
+        if [[ -n "${{ inputs.languages }}" ]]; then
+          IFS=',' read -ra langs <<< "${{ inputs.languages }}"
+          for lang in "${langs[@]}"; do
+            lang="$(echo "$lang" | xargs)"
+            [[ -n "$lang" ]] && args+=("--language" "$lang")
+          done
+        fi
+        [[ "${{ inputs.changed_only }}" == "true" ]] && args+=("--changed-only")
+        [[ "${{ inputs.changed_only_strict }}" == "true" ]] && args+=("--changed-only-strict")
+        [[ "${{ inputs.diff_functions }}" == "true" ]] && args+=("--diff-functions")
+        [[ "${{ inputs.no_diff_functions }}" == "true" ]] && args+=("--no-diff-functions")
+        [[ "${{ inputs.compare_base }}" == "true" ]] && args+=("--compare-base")
+        args+=("--base-ref" "${{ inputs.base_ref }}")
+        args+=("--md" "${{ inputs.md_out }}")
+        args+=("--json" "${{ inputs.json_out }}")
+        [[ -n "${{ inputs.html_out }}" ]] && args+=("--html" "${{ inputs.html_out }}")
+        [[ -n "$BASELINE_JSON" ]] && args+=("--baseline-json" "$BASELINE_JSON")
+        [[ -n "${{ inputs.sarif_out }}" ]] && args+=("--sarif" "${{ inputs.sarif_out }}")
+        [[ -n "${{ inputs.annotations_out }}" ]] && args+=("--annotations" "${{ inputs.annotations_out }}")
+        [[ -n "${{ inputs.comment_out }}" ]] && args+=("--comment" "${{ inputs.comment_out }}")
+        [[ -n "${{ inputs.check_run_out }}" ]] && args+=("--check-run" "${{ inputs.check_run_out }}")
+        [[ -n "${{ inputs.trend_out }}" ]] && args+=("--trend" "${{ inputs.trend_out }}")
+        [[ -n "${{ inputs.trend_html_out }}" ]] && args+=("--trend-html" "${{ inputs.trend_html_out }}")
+        [[ -n "${{ inputs.slack_out }}" ]] && args+=("--slack" "${{ inputs.slack_out }}")
+        [[ -n "${{ inputs.teams_out }}" ]] && args+=("--teams" "${{ inputs.teams_out }}")
+        [[ -n "${{ inputs.snippets_out }}" ]] && args+=("--snippets" "${{ inputs.snippets_out }}")
+        [[ -n "${{ inputs.min_confidence }}" ]] && args+=("--min-confidence" "${{ inputs.min_confidence }}")
+        [[ -n "${{ inputs.min_risk_score }}" ]] && args+=("--min-risk-score" "${{ inputs.min_risk_score }}")
+        [[ -n "${{ inputs.min_severity }}" ]] && args+=("--min-severity" "${{ inputs.min_severity }}")
+        [[ -n "${{ inputs.min_regression_risk_delta }}" ]] && args+=("--min-regression-risk-delta" "${{ inputs.min_regression_risk_delta }}")
+        [[ -n "${{ inputs.min_regression_hint_delta }}" ]] && args+=("--min-regression-hint-delta" "${{ inputs.min_regression_hint_delta }}")
+        [[ -n "${{ inputs.min_regression_severity }}" ]] && args+=("--min-regression-severity" "${{ inputs.min_regression_severity }}")
+        [[ -n "${{ inputs.min_function_lines }}" ]] && args+=("--min-function-lines" "${{ inputs.min_function_lines }}")
+        [[ -n "${{ inputs.warn_regression_risk_delta }}" ]] && args+=("--warn-regression-risk-delta" "${{ inputs.warn_regression_risk_delta }}")
+        [[ -n "${{ inputs.fail_regression_risk_delta }}" ]] && args+=("--fail-regression-risk-delta" "${{ inputs.fail_regression_risk_delta }}")
+        [[ "${{ inputs.dynamic_verify }}" == "true" ]] && args+=("--dynamic-verify")
+        [[ -n "${{ inputs.dynamic_top }}" ]] && args+=("--dynamic-top" "${{ inputs.dynamic_top }}")
+        [[ -n "${{ inputs.dynamic_timeout }}" ]] && args+=("--dynamic-timeout" "${{ inputs.dynamic_timeout }}")
+        [[ -n "${{ inputs.dynamic_confidence }}" ]] && args+=("--dynamic-confidence" "${{ inputs.dynamic_confidence }}")
+        [[ -n "${{ inputs.dynamic_trials }}" ]] && args+=("--dynamic-trials" "${{ inputs.dynamic_trials }}")
+        [[ -n "${{ inputs.dynamic_slowdown_ratio }}" ]] && args+=("--dynamic-slowdown-ratio" "${{ inputs.dynamic_slowdown_ratio }}")
+        [[ -n "${{ inputs.dynamic_warmups }}" ]] && args+=("--dynamic-warmups" "${{ inputs.dynamic_warmups }}")
+        [[ -n "${{ inputs.dynamic_memory_limit }}" ]] && args+=("--dynamic-memory-limit" "${{ inputs.dynamic_memory_limit }}")
+        [[ -n "${{ inputs.dynamic_jitter_threshold }}" ]] && args+=("--dynamic-jitter-threshold" "${{ inputs.dynamic_jitter_threshold }}")
+        if [[ -n "${{ inputs.dynamic_sizes }}" ]]; then
+          IFS=',' read -ra sizes <<< "${{ inputs.dynamic_sizes }}"
+          for size in "${sizes[@]}"; do
+            size="$(echo "$size" | xargs)"
+            [[ -n "$size" ]] && args+=("--dynamic-size" "$size")
+          done
+        fi
+        [[ -n "${{ inputs.max_findings }}" ]] && args+=("--max-findings" "${{ inputs.max_findings }}")
+        [[ -n "${{ inputs.fail_on_finding_severity }}" ]] && args+=("--fail-on-finding-severity" "${{ inputs.fail_on_finding_severity }}")
+        [[ -n "${{ inputs.max_risk_score }}" ]] && args+=("--max-risk-score" "${{ inputs.max_risk_score }}")
+        [[ -n "${{ inputs.notify_min_severity }}" ]] && args+=("--notify-min-severity" "${{ inputs.notify_min_severity }}")
+        [[ -n "${{ inputs.notify_max_items }}" ]] && args+=("--notify-max-items" "${{ inputs.notify_max_items }}")
+        [[ "${{ inputs.rules }}" == "true" ]] && args+=("--rules")
+        [[ "${{ inputs.no_rules }}" == "true" ]] && args+=("--no-rules")
+        if [[ -n "${{ inputs.enabled_rules }}" ]]; then
+          IFS=',' read -ra rules <<< "${{ inputs.enabled_rules }}"
+          for rule in "${rules[@]}"; do
+            rule="$(echo "$rule" | xargs)"
+            [[ -n "$rule" ]] && args+=("--rule" "$rule")
+          done
+        fi
+        if [[ -n "${{ inputs.disabled_rules }}" ]]; then
+          IFS=',' read -ra rules <<< "${{ inputs.disabled_rules }}"
+          for rule in "${rules[@]}"; do
+            rule="$(echo "$rule" | xargs)"
+            [[ -n "$rule" ]] && args+=("--disable-rule" "$rule")
+          done
+        fi
+        if [[ -n "${{ inputs.rule_plugins }}" ]]; then
+          IFS=',' read -ra plugins <<< "${{ inputs.rule_plugins }}"
+          for plugin in "${plugins[@]}"; do
+            plugin="$(echo "$plugin" | xargs)"
+            [[ -n "$plugin" ]] && args+=("--rule-plugin" "$plugin")
+          done
+        fi
+        if [[ -n "${{ inputs.rule_severity_overrides }}" ]]; then
+          IFS=',' read -ra overrides <<< "${{ inputs.rule_severity_overrides }}"
+          for item in "${overrides[@]}"; do
+            item="$(echo "$item" | xargs)"
+            [[ -n "$item" ]] && args+=("--rule-severity" "$item")
+          done
+        fi
+        [[ "${{ inputs.no_call_graph }}" == "true" ]] && args+=("--no-call-graph")
+        [[ -n "${{ inputs.call_graph_passes }}" ]] && args+=("--call-graph-passes" "${{ inputs.call_graph_passes }}")
+        if [[ -n "${{ inputs.hot_paths }}" ]]; then
+          IFS=',' read -ra paths <<< "${{ inputs.hot_paths }}"
+          for path in "${paths[@]}"; do
+            path="$(echo "$path" | xargs)"
+            [[ -n "$path" ]] && args+=("--hot-path" "$path")
+          done
+        fi
+        if [[ -n "${{ inputs.hot_functions }}" ]]; then
+          IFS=',' read -ra funcs <<< "${{ inputs.hot_functions }}"
+          for func in "${funcs[@]}"; do
+            func="$(echo "$func" | xargs)"
+            [[ -n "$func" ]] && args+=("--hot-function" "$func")
+          done
+        fi
+        [[ -n "${{ inputs.hot_multiplier }}" ]] && args+=("--hot-multiplier" "${{ inputs.hot_multiplier }}")
+        [[ -n "${{ inputs.hot_profile }}" ]] && args+=("--hot-profile" "${{ inputs.hot_profile }}")
+        [[ -n "${{ inputs.hot_profile_top }}" ]] && args+=("--hot-profile-top" "${{ inputs.hot_profile_top }}")
+        [[ -n "${{ inputs.hot_trace_summary }}" ]] && args+=("--hot-trace-summary" "${{ inputs.hot_trace_summary }}")
+        [[ -n "${{ inputs.parallel_workers }}" ]] && args+=("--parallel-workers" "${{ inputs.parallel_workers }}")
+        [[ -n "${{ inputs.analysis_time_budget }}" ]] && args+=("--analysis-time-budget" "${{ inputs.analysis_time_budget }}")
+        [[ -n "${{ inputs.cache_path }}" ]] && args+=("--cache" "${{ inputs.cache_path }}")
+        [[ "${{ inputs.no_cache }}" == "true" ]] && args+=("--no-cache")
+        [[ "${{ inputs.refresh_cache }}" == "true" ]] && args+=("--refresh-cache")
+        [[ "${{ inputs.fail_on_regressions }}" == "true" ]] && args+=("--fail-on-regressions")
+        [[ -n "${{ inputs.fail_on_severity }}" ]] && args+=("--fail-on-severity" "${{ inputs.fail_on_severity }}")
+        [[ -n "${{ inputs.max_regressions }}" ]] && args+=("--max-regressions" "${{ inputs.max_regressions }}")
+        [[ -n "${{ inputs.max_high_regressions }}" ]] && args+=("--max-high-regressions" "${{ inputs.max_high_regressions }}")
+        [[ -n "${{ inputs.gating_preset }}" ]] && args+=("--gating" "${{ inputs.gating_preset }}")
+        [[ -n "${{ inputs.max_risk_delta }}" ]] && args+=("--max-risk-delta" "${{ inputs.max_risk_delta }}")
+        [[ -n "${{ inputs.risk_delta_budget }}" ]] && args+=("--risk-delta-budget" "${{ inputs.risk_delta_budget }}")
+        if [[ -n "${{ inputs.risk_delta_budget_paths }}" ]]; then
+          IFS=',' read -ra budgets <<< "${{ inputs.risk_delta_budget_paths }}"
+          for budget in "${budgets[@]}"; do
+            budget="$(echo "$budget" | xargs)"
+            [[ -n "$budget" ]] && args+=("--risk-delta-budget-path" "$budget")
+          done
+        fi
+        if [[ -n "${{ inputs.loop_depth_fail_paths }}" ]]; then
+          IFS=',' read -ra paths <<< "${{ inputs.loop_depth_fail_paths }}"
+          for path in "${paths[@]}"; do
+            path="$(echo "$path" | xargs)"
+            [[ -n "$path" ]] && args+=("--loop-depth-fail-path" "$path")
+          done
+        fi
+        if [[ -n "${{ inputs.no_regressions_paths }}" ]]; then
+          IFS=',' read -ra paths <<< "${{ inputs.no_regressions_paths }}"
+          for path in "${paths[@]}"; do
+            path="$(echo "$path" | xargs)"
+            [[ -n "$path" ]] && args+=("--no-regressions-path" "$path")
+          done
+        fi
+        [[ "${{ inputs.new_findings_only }}" == "true" ]] && args+=("--new-findings-only")
+
+        exit_code=0
+        if ! "${args[@]}"; then
+          exit_code=$?
+        fi
+        echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT"
+        exit 0
+
+    - id: stats
+      if: ${{ always() }}
+      shell: bash
+      env:
+        REPORT_PATH: ${{ inputs.json_out }}
+        EXIT_CODE: ${{ steps.analyze.outputs.exit_code }}
+      run: |
+        python - <<'PY'
+        import json
+        import os
+        from pathlib import Path
+
+        report_path = Path(os.environ.get("REPORT_PATH", ""))
+        exit_code = os.environ.get("EXIT_CODE", "0")
+
+        data = {}
+        if report_path.exists():
+            data = json.loads(report_path.read_text(encoding="utf-8"))
+
+        stats = data.get("stats") or {}
+        findings_list = data.get("findings", []) or []
+        regressions_list = data.get("regressions", []) or []
+        findings = int(stats.get("findings_total") or len(findings_list))
+        regressions = int(stats.get("regressions_total") or len(regressions_list))
+        if stats:
+            max_risk_score = float(stats.get("max_risk_score") or 0.0)
+            avg_risk_score = float(stats.get("avg_risk_score") or 0.0)
+            max_regression_delta = float(stats.get("max_regression_delta") or 0.0)
+        else:
+            risks = [float(item.get("risk_score", 0.0)) for item in findings_list if isinstance(item, dict)]
+            max_risk_score = max(risks, default=0.0)
+            avg_risk_score = sum(risks) / len(risks) if risks else 0.0
+            deltas = [float(item.get("risk_delta", 0.0)) for item in regressions_list if isinstance(item, dict)]
+            max_regression_delta = max(deltas, default=0.0)
+        gating_failed = "true" if str(exit_code) != "0" else "false"
+
+        output_path = Path(os.environ["GITHUB_OUTPUT"])
+        with output_path.open("a", encoding="utf-8") as fh:
+            fh.write(f"findings={findings}\n")
+            fh.write(f"regressions={regressions}\n")
+            fh.write(f"max_risk_score={max_risk_score}\n")
+            fh.write(f"avg_risk_score={avg_risk_score}\n")
+            fh.write(f"max_regression_delta={max_regression_delta}\n")
+            fh.write(f"gating_failed={gating_failed}\n")
+            fh.write(f"exit_code={exit_code}\n")
+        PY
+
+    - if: ${{ inputs.write_summary == 'true' && always() }}
+      shell: bash
+      run: |
+        if [[ -f "${{ inputs.md_out }}" ]]; then
+          cat "${{ inputs.md_out }}" >> "$GITHUB_STEP_SUMMARY"
+        elif [[ -f "${{ inputs.comment_out }}" ]]; then
+          cat "${{ inputs.comment_out }}" >> "$GITHUB_STEP_SUMMARY"
+        else
+          echo "OccamO: no report generated." >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+    - if: ${{ inputs.upload_sarif == 'true' }}
+      uses: github/codeql-action/upload-sarif@45c373516f557556c15d420e3f5e0aa3d64366bc # v3
+      with:
+        sarif_file: ${{ inputs.sarif_out }}
+
+    - if: ${{ inputs.post_comment == 'true' && inputs.comment_out != '' }}
+      uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+      with:
+        script: |
+          const fs = require('fs');
+          const body = fs.readFileSync('${{ inputs.comment_out }}', 'utf8');
+          const issue_number = context.payload.pull_request?.number;
+          if (!issue_number) {
+            core.setFailed('No pull_request found in event payload.');
+            return;
+          }
+          const marker = '<!-- occamo-comment -->';
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number,
+            per_page: 100,
+          });
+          const existing = comments.find(comment =>
+            comment.user?.type === 'Bot' && comment.body?.includes(marker)
+          );
+          if (existing) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: existing.id,
+              body,
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number,
+              body,
+            });
+          }
+
+    - if: ${{ inputs.post_check_run == 'true' && inputs.check_run_out != '' }}
+      uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+      with:
+        script: |
+          const fs = require('fs');
+          const payload = JSON.parse(fs.readFileSync('${{ inputs.check_run_out }}', 'utf8'));
+          const { data } = await github.rest.checks.listForRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: context.sha,
+            check_name: 'OccamO',
+          });
+          const existing = data.check_runs?.[0];
+          const request = {
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            name: 'OccamO',
+            head_sha: context.sha,
+            status: 'completed',
+            conclusion: 'neutral',
+            output: {
+              title: payload.title,
+              summary: payload.summary,
+              text: payload.text,
+              annotations: payload.annotations,
+            },
+          };
+          if (existing) {
+            await github.rest.checks.update({
+              check_run_id: existing.id,
+              ...request,
+            });
+          } else {
+            await github.rest.checks.create(request);
+          }
+
+    - if: ${{ inputs.fail_on_error == 'true' && steps.analyze.outputs.exit_code != '0' }}
+      shell: bash
+      run: exit ${{ steps.analyze.outputs.exit_code }}

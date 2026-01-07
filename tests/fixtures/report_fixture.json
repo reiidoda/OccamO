@@ -1,0 +1,149 @@
+{
+  "schema_version": 7,
+  "generated_at": "2024-01-01T00:00:00Z",
+  "repo_root": ".",
+  "changed_only": true,
+  "base_ref": "origin/main",
+  "regression_mode": true,
+  "findings": [
+    {
+      "file": "src/app.py",
+      "qualname": "Widget.render",
+      "function_id": "fid-1",
+      "lineno": 10,
+      "end_lineno": 20,
+      "severity": "high",
+      "complexity_hint": "O(n^2) candidate",
+      "confidence": 0.75,
+      "risk_score": 2.1,
+      "signals": {
+        "loops": 2,
+        "max_loop_depth": 2,
+        "recursion": false,
+        "sort_calls": 1,
+        "comprehension": 0
+      },
+      "body_hash": "hash1",
+      "explanation": "Nested loops detected.",
+      "suggestions": [
+        "Reduce nesting by precomputing lookups.",
+        "Sort once outside loops."
+      ],
+      "rule_id": "",
+      "rule_name": "",
+      "dynamic": {
+        "label": "O(n^2) candidate",
+        "confidence": 0.8,
+        "status": "confirmed",
+        "note": "stable"
+      }
+    },
+    {
+      "file": "src/utils.py",
+      "qualname": "helper",
+      "function_id": "fid-2",
+      "lineno": 5,
+      "end_lineno": 8,
+      "severity": "low",
+      "complexity_hint": "O(n) candidate",
+      "confidence": 0.65,
+      "risk_score": 0.4,
+      "signals": {
+        "loops": 1,
+        "max_loop_depth": 1,
+        "recursion": false,
+        "sort_calls": 0,
+        "comprehension": 0
+      },
+      "body_hash": "hash2",
+      "explanation": "",
+      "suggestions": [],
+      "rule_id": "",
+      "rule_name": ""
+    }
+  ],
+  "regressions": [
+    {
+      "file": "src/app.py",
+      "qualname": "Widget.render",
+      "function_id": "fid-1",
+      "lineno": 10,
+      "base_risk_score": 0.4,
+      "head_risk_score": 2.1,
+      "base_hint": "O(n) candidate",
+      "head_hint": "O(n^2) candidate",
+      "risk_delta": 1.7,
+      "hint_delta": 3,
+      "regression_severity": "high",
+      "explanation": "Loop depth increased 1 -> 2.",
+      "suggestions": [
+        "Reduce nested loops by precomputing lookups or indexing with dict/set.",
+        "Sort once outside loops or use a heap for top-k."
+      ],
+      "base_signals": {
+        "loops": 1,
+        "max_loop_depth": 1,
+        "recursion": false,
+        "sort_calls": 0,
+        "comprehension": 0
+      },
+      "head_signals": {
+        "loops": 2,
+        "max_loop_depth": 2,
+        "recursion": false,
+        "sort_calls": 1,
+        "comprehension": 0
+      },
+      "dynamic": {
+        "status": "confirmed",
+        "ratio": 1.6,
+        "note": "stable"
+      }
+    }
+  ],
+  "diffs": [
+    {
+      "file": "src/new.py",
+      "qualname": "new_func",
+      "function_id": "fid-3",
+      "lineno": 3,
+      "change_type": "added",
+      "trend": "new",
+      "base_risk_score": null,
+      "head_risk_score": 0.8,
+      "base_hint": null,
+      "head_hint": "O(n) candidate",
+      "risk_delta": null,
+      "hint_delta": null,
+      "regression_severity": null
+    }
+  ],
+  "suppressions": [
+    {
+      "file": "src/legacy.py",
+      "qualname": "legacy.fn",
+      "function_id": "fid-4",
+      "lineno": 42,
+      "end_lineno": 45,
+      "comment_line": 41,
+      "reason": "legacy path",
+      "ticket": "ABC-123",
+      "comment": "occamo: ignore reason=\"legacy path\" ticket=\"ABC-123\""
+    }
+  ],
+  "stats": {
+    "findings_total": 2,
+    "regressions_total": 1,
+    "severity_counts": {
+      "high": 1,
+      "low": 1
+    },
+    "hint_counts": {
+      "O(n^2) candidate": 1,
+      "O(n) candidate": 1
+    },
+    "max_risk_score": 2.1,
+    "avg_risk_score": 1.25,
+    "max_regression_delta": 1.7
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OccamO Config",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "include": { "type": "array", "items": { "type": "string" } },
+    "exclude": { "type": "array", "items": { "type": "string" } },
+    "report_include": { "type": "array", "items": { "type": "string" } },
+    "report_exclude": { "type": "array", "items": { "type": "string" } },
+    "languages": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "python",
+          "javascript",
+          "typescript",
+          "java",
+          "kotlin",
+          "go",
+          "golang",
+          "py",
+          "js",
+          "ts",
+          "jsx",
+          "tsx",
+          "kt",
+          "kts"
+        ]
+      }
+    },
+    "max_files": { "type": "integer" },
+    "changed_only": { "type": "boolean" },
+    "changed_only_strict": { "type": "boolean" },
+    "diff_functions": { "type": "boolean" },
+    "compare_base": { "type": "boolean" },
+    "min_confidence": { "type": "number" },
+    "min_risk_score": { "type": "number" },
+    "min_severity": { "$ref": "#/$defs/severity" },
+    "min_regression_risk_delta": { "type": "number" },
+    "min_regression_hint_delta": { "type": "integer" },
+    "min_regression_severity": { "$ref": "#/$defs/severity" },
+    "min_function_lines": { "type": "integer" },
+    "warn_regression_risk_delta": { "type": "number" },
+    "fail_regression_risk_delta": { "type": "number" },
+    "dynamic_verify": { "type": "boolean" },
+    "dynamic_top": { "type": "integer" },
+    "dynamic_timeout_seconds": { "type": "number" },
+    "dynamic_confidence": { "type": "number" },
+    "dynamic_trials": { "type": "integer" },
+    "dynamic_slowdown_ratio": { "type": "number" },
+    "dynamic_warmups": { "type": "integer" },
+    "dynamic_memory_limit_mb": { "type": "integer" },
+    "dynamic_jitter_threshold": { "type": "number" },
+    "dynamic_sizes": { "type": "array", "items": { "type": "integer" } },
+    "max_findings": { "type": "integer" },
+    "fail_on_finding_severity": { "$ref": "#/$defs/severity" },
+    "max_risk_score": { "type": "number" },
+    "notify_min_severity": { "$ref": "#/$defs/severity" },
+    "notify_max_items": { "type": "integer" },
+    "rules_enabled": { "type": "boolean" },
+    "rule_plugins": { "type": "array", "items": { "type": "string" } },
+    "enabled_rules": { "type": "array", "items": { "type": "string" } },
+    "disabled_rules": { "type": "array", "items": { "type": "string" } },
+    "rule_severity_overrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rule_id", "severity"],
+        "properties": {
+          "rule_id": { "type": "string" },
+          "severity": { "$ref": "#/$defs/severity" }
+        }
+      }
+    },
+    "rule_config": { "type": "object" },
+    "call_graph_enabled": { "type": "boolean" },
+    "call_graph_passes": { "type": "integer" },
+    "hot_paths": { "type": "array", "items": { "type": "string" } },
+    "hot_functions": { "type": "array", "items": { "type": "string" } },
+    "hot_path_multiplier": { "type": "number" },
+    "hot_profile_path": { "type": "string" },
+    "hot_profile_top": { "type": "integer" },
+    "hot_trace_summary_path": { "type": "string" },
+    "parallel_workers": { "type": "integer" },
+    "analysis_time_budget_seconds": { "type": "number" },
+    "cache_path": { "type": "string" },
+    "use_cache": { "type": "boolean" },
+    "gating_preset": { "type": "string", "enum": ["strict", "balanced", "relaxed"] },
+    "fail_on_regressions": { "type": "boolean" },
+    "fail_on_severity": { "$ref": "#/$defs/severity" },
+    "max_regressions": { "type": "integer" },
+    "max_high_regressions": { "type": "integer" },
+    "max_risk_delta": { "type": "number" },
+    "risk_delta_budget": { "type": "number" },
+    "risk_delta_budgets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["pattern", "budget"],
+        "properties": {
+          "pattern": { "type": "string" },
+          "budget": { "type": "number" }
+        }
+      }
+    },
+    "loop_depth_fail_paths": { "type": "array", "items": { "type": "string" } },
+    "no_regressions_paths": { "type": "array", "items": { "type": "string" } },
+    "new_findings_only": { "type": "boolean" },
+    "severity_overrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["pattern", "severity"],
+        "properties": {
+          "pattern": { "type": "string" },
+          "severity": { "$ref": "#/$defs/severity" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "severity": {
+      "type": "string",
+      "enum": ["info", "low", "medium", "high", "critical"]
+    }
+  }
+}
