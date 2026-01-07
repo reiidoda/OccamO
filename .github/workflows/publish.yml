@@ -24,7 +24,7 @@ jobs:
           pip install build
           python -m build
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@ef244123eb79f2f7a7e75d99086184180e6d0018 # v1
+        uses: actions/attest-build-provenance@00014ed6ed5efc5b1ab7f7f34a39eb55d41aa4f8 # v1
         with:
           subject-path: dist/*
       - name: Generate SBOM
